@@ -34,13 +34,6 @@ http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/cu
 	</flow>
 	<flow name="celiFlow" doc:id="6a8ed12a-33bf-4f7e-a667-cced7ae67d76" >
 		<jms:consume doc:name="Consume" doc:id="96f7862a-f61e-4c28-9a1b-53fe31cf43d6" config-ref="JMS_Config1"/>
-		<ee:transform doc:name="Transform Message" doc:id="f79ad67d-03f6-4d20-9cd5-3f50659447f4" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-payload]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="3f45e141-ca37-48e2-9649-823f406672fb" message='"cheaking1"'/>
 	</flow>
 </mule>
