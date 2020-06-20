@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="70e2c30c-b685-4fdf-94c4-7ee6fffbf1e4" >
+		<salesforce:cached-basic-connection username="kal@abc.com" password="password5" securityToken="tOtbLqdoGLEPcJlKL0NHNAyv" />
+	</salesforce:sfdc-config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="83f457a8-d964-4917-b2f8-d57fa7aad88a" >
+		<http:listener-connection host="0.0.0.0" port="8777" />
+	</http:listener-config>
+	<jms:config name="JMS_Config" doc:name="JMS Config" doc:id="5e8e252f-a700-4497-b195-3f42b9e2a636" >
+		<jms:active-mq-connection username="admin" password="admin" clientId="kal" >
+			<jms:caching-strategy >
+				<jms:no-caching />
+			</jms:caching-strategy>
+			<jms:factory-configuration brokerUrl=" tcp://DESKTOP-AKV06ME:61616" />
+		</jms:active-mq-connection>
+	</jms:config>
+	<jms:config name="JMS_Config1" doc:name="JMS Config" doc:id="98901122-ffa2-4101-8cef-672df3213ff7" >
+		<jms:active-mq-connection username="admin" password="admin" >
+			<jms:factory-configuration brokerUrl=" tcp://DESKTOP-AKV06ME:61616" />
+		</jms:active-mq-connection>
+	</jms:config>
+	<flow name="celiFlow1" doc:id="62056647-d2e7-4dc9-b35b-b4f8d38820e1" >
+		<http:listener doc:name="Listener" doc:id="60ff9496-7c41-4829-b420-4a88318df72c" config-ref="HTTP_Listener_config" path="/mn"/>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="f64f360f-7bfd-49cb-8d50-09900b0d67c2" />
+		<jms:publish doc:name="Publish" doc:id="7f1ef24c-81ae-4537-bdad-1e782e810ff9" />
+	</flow>
+	<flow name="celiFlow" doc:id="6a8ed12a-33bf-4f7e-a667-cced7ae67d76" >
+		<jms:consume doc:name="Consume" doc:id="96f7862a-f61e-4c28-9a1b-53fe31cf43d6" config-ref="JMS_Config1"/>
+		<ee:transform doc:name="Transform Message" doc:id="f79ad67d-03f6-4d20-9cd5-3f50659447f4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
